@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/Alwin18/go-unit-test/internal/handlers"
@@ -10,15 +11,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSetRoutes_HelloWorld(t *testing.T) {
+var router *gin.Engine
+
+func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
 
-	// Setup handler & route config
 	helloWorldHandler := handlers.NewHelloWorld()
 	routeConfig := NewRouteConfig(helloWorldHandler)
-	router := routeConfig.SetRoutes()
+	router = routeConfig.SetRoutes()
 
-	// Perform test request
+	os.Exit(m.Run())
+}
+
+func TestSetRoutes_HelloWorld(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/hello-world", nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -28,14 +33,6 @@ func TestSetRoutes_HelloWorld(t *testing.T) {
 }
 
 func TestSetRoutes_Ping(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
-	// Setup handler & route config
-	helloWorldHandler := handlers.NewHelloWorld()
-	routeConfig := NewRouteConfig(helloWorldHandler)
-	router := routeConfig.SetRoutes()
-
-	// Perform test request
 	req, _ := http.NewRequest("GET", "/ping", nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
